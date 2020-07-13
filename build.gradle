@@ -86,6 +86,7 @@ publishing {
 
             pom {
                 name = "Sailor STD Extensions"
+                description = "Helpful extensions to the Java or Kotlin standard libraries."
             }
         }
     }
