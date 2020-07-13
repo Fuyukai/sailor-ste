@@ -3,6 +3,7 @@ plugins {
     id "com.diffplug.gradle.spotless" version "4.5.1"
     id "maven-publish"
     id "maven"
+    id "com.jfrog.bintray" version "1.8.5"
 }
 
 group = "tf.sailor.sste"
@@ -73,6 +74,21 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.javaParameters = true
     kotlinOptions.jvmTarget = "13"
+}
+
+bintray {
+    user = System.getenv("BINTRAY_USER")
+    key = System.getenv("BINTRAY_API_KEY")
+    publications = ["maven"]
+
+    pkg {
+        repo = "sailor.tf"
+        name = "sailor-ste"
+
+        version {
+            name = project.version
+        }
+    }
 }
 
 publishing {
