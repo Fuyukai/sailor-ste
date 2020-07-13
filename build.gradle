@@ -1,0 +1,92 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.4-M2"
+    id "com.diffplug.gradle.spotless" version "4.5.1"
+    id "maven-publish"
+    id "maven"
+}
+
+group = "tf.sailor.sste"
+version = "1.0.0"
+
+repositories {
+    mavenCentral()
+    jcenter()
+
+    maven { url = "https://dl.bintray.com/kotlin/kotlin-eap" }
+}
+
+dependencies {
+    // == Kotlin == //
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    api "org.jetbrains.kotlin:kotlin-reflect"
+
+    // == Crypto == //
+    implementation "com.goterl.lazycode:lazysodium-java:4.3.0"
+    implementation "net.java.dev.jna:jna:5.5.0"
+
+    // == Testing == //
+    testImplementation "org.junit.jupiter:junit-jupiter:5.6.2"
+    testImplementation "io.strikt:strikt-core:0.26.1"
+}
+
+spotless {
+    kotlin {
+        targetExclude "build/generated/**"
+        /*ktlint().userData(
+            [
+                "disabled_rules": "no-wildcard-imports",
+                "max_line_length": "100"
+            ]
+        )*/  // disabled until ktlint supports 1.4
+        licenseHeaderFile "$project.rootDir/gradle/LICENCE-HEADER"
+    }
+
+    java {
+        targetExclude "build/generated/**"
+        licenseHeaderFile "$project.rootDir/gradle/LICENCE-HEADER"
+    }
+}
+
+java.sourceCompatibility = JavaVersion.VERSION_14
+java.targetCompatibility = JavaVersion.VERSION_14
+
+/*tasks.withType(JavaCompile) {
+    options.compilerArgs.add("--enable-preview")
+}*/
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+kotlin {
+    explicitApi = "strict"
+}
+
+compileKotlin {
+    kotlinOptions.javaParameters = true
+    kotlinOptions.jvmTarget = "13"
+}
+
+compileTestKotlin {
+    kotlinOptions.javaParameters = true
+    kotlinOptions.jvmTarget = "13"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId project.group
+            artifactId project.name
+            version project.version
+
+            from components.java
+
+            pom {
+                name = "Sailor STD Extensions"
+            }
+        }
+    }
+}
