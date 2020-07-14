@@ -3,7 +3,6 @@ plugins {
     id "com.diffplug.gradle.spotless" version "4.5.1"
     id "maven-publish"
     id "maven"
-    id "com.jfrog.bintray" version "1.8.5"
 }
 
 group = "tf.sailor.sste"
@@ -14,6 +13,10 @@ repositories {
     jcenter()
 
     maven { url = "https://dl.bintray.com/kotlin/kotlin-eap" }
+}
+
+java {
+    withSourcesJar()
 }
 
 dependencies {
@@ -76,20 +79,7 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "13"
 }
 
-bintray {
-    user = System.getenv("BINTRAY_USER")
-    key = System.getenv("BINTRAY_API_KEY")
-    publications = ["maven"]
 
-    pkg {
-        repo = "sailor.tf"
-        name = "sailor-ste"
-
-        version {
-            name = project.version
-        }
-    }
-}
 
 publishing {
     publications {
@@ -103,6 +93,35 @@ publishing {
             pom {
                 name = "Sailor STD Extensions"
                 description = "Helpful extensions to the Java or Kotlin standard libraries."
+
+                licenses {
+                    license {
+                        name = "GNU Lesser General Public License v3.0 or later"
+                        url = "https://www.gnu.org/licenses/lgpl-3.0.txt"
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = "Fuyukai"
+                        name = "Lura F. D."
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "bintray"
+            url = uri(
+                "https://api.bintray.com/maven/fuyukai/sailor.tf/sailor-ste/" +
+                ";publish=1;override=1"
+            )
+
+            credentials {
+                username = System.getenv("BINTRAY_USER")
+                password = System.getenv("BINTRAY_API_KEY")
             }
         }
     }
