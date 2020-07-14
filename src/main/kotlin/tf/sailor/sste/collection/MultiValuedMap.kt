@@ -40,6 +40,11 @@ public interface MultiValuedMap<K, V> : Iterable<Map.Entry<K, V>> {
         return get(key).isNotEmpty()
     }
 
+    /**
+     * Shortcut for [containsKey].
+     */
+    public fun contains(key: K): Boolean = containsKey(key)
+
     /** Gets the collection of keys in this map. */
     public val keys: Sequence<K>
 
@@ -95,6 +100,13 @@ public interface MutableMultiValuedMap<K, V> : MultiValuedMap<K, V> {
 public fun MultiValuedMap<*, *>.isEmpty(): Boolean = size == 0
 /** Checks if this MultiValuedMap is not empty. */
 public fun MultiValuedMap<*, *>.isNotEmpty(): Boolean = size > 0
+/**
+ * Gets one value from this map or a default function if there are no entries for the key.
+ */
+public inline fun <K, V> MultiValuedMap<K, V>.getOneOrElse(key: K, default: () -> V): V {
+    val items = get(key)
+    return items.firstOrNull() ?: default()
+}
 
 // === IMPLS === //
 
