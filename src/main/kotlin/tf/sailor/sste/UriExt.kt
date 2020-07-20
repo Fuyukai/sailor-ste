@@ -68,18 +68,27 @@ public fun URI.copy(
 }
 
 /**
- * Creates a new [MultiValuedMap] containing the query parameters of this URI.
+ * Shortcut for `URI.rawQuery.parseQueryString(charset)`.
+ */
+public fun URI.parseQueryParams(
+    charset: Charset = Charsets.UTF_8
+): MultiValuedMap<String, String> = rawQuery.parseQueryString(charset)
+
+/**
+ * Parses a query string (URI.query or x-www-form-urlencoded).
  *
  * If a parameter with no value is present, it will be represented by the empty string.
  *
  * @param charset: The [Charset] to decode URL parameters with.
  */
-public fun URI.parseQueryParams(charset: Charset = Charsets.UTF_8): MultiValuedMap<String, String> {
+public fun String.parseQueryString(
+    charset: Charset = Charsets.UTF_8
+): MultiValuedMap<String, String> {
     val map = mutableMultiValuedMapOf<String, String>()
 
     // this uses the raw query as not to have url decoded & or = mess stuff up
-    val query = rawQuery ?: return multiMapOf()
-    val split = query.split("&")
+    if (isBlank()) return multiMapOf()
+    val split = split("&")
 
     for (pair in split) {
         if (!pair.contains("=")) {
